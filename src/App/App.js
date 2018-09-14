@@ -1,16 +1,18 @@
-import React, { Component } from 'react';
+import React from 'react';
+import { BrowserRouter, Switch, Route } from 'react-router-dom';
+import { Provider } from 'react-redux';
+import Posts from '../Components/Posts';
+import store from '../store';
 import './App.css';
 
-class App extends Component {
-    render() {
-        return (
-            <div className="App">
-                <h1 style={{ textAlign: 'center' }}>
-                    Busca de Posts
-                </h1>
-            </div>
-        );
-    }
-}
+const App = () => (
+	<Provider store={store}>
+		<BrowserRouter>
+			<Switch>
+				<Route path="/" component={Posts} />
+			</Switch>
+		</BrowserRouter>
+	</Provider>
+);
 
 export default App;

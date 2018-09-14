@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import BottomScrollListener from 'react-bottom-scroll-listener';
 import {
   Row,
   Col,
@@ -11,6 +12,7 @@ import 'antd/dist/antd.css';
 import { fetchImages } from '../Actions/images';
 import { fetchPosts } from '../Actions/posts';
 import { fetchUsers } from '../Actions/users';
+import './Posts.css';
 
 class Posts extends Component {
   static propTypes = {
@@ -44,7 +46,7 @@ class Posts extends Component {
   }
 
   state = {
-    howManyCardsShouldLoad: 6,
+    howManyCardsShouldLoad: 9,
     filterInput: '',
   }
 
@@ -54,15 +56,36 @@ class Posts extends Component {
     );
   }
 
+  onLoadMoreCards = () => {
+    this.setState(
+      prevState => ({ ...prevState, howManyCardsShouldLoad: prevState.howManyCardsShouldLoad + 3 }),
+    );
+  }
+
   getCard = (image, post, user) => (
     <Col key={`Post ${post.id}`} span={8}>
       <Card
-        cover={<img alt={image.title} src={image.thumbnailUrl} />}
+        className="post-card"
+        cover={<img className="post-image" alt={image.title} src={image.url} />}
       >
-        <p>{post.title}</p>
-        <p>{post.body}</p>
-        <p>{`Autor: ${user.name}`}</p>
-        <p>{`Empresa: ${user.company.name}`}</p>
+        <p className="card-title">{post.title}</p>
+        <p className="default-text">{post.body}</p>
+        <div className="card-footer-container">
+          <p className="card-author">
+            Autor:
+          </p>
+          <p className="default-text">
+            {user.name}
+          </p>
+        </div>
+        <div className="card-footer-container">
+          <p className="card-company">
+            {'Empresa: '}
+          </p>
+          <p className="default-text">
+            {user.company.name}
+          </p>
+        </div>
       </Card>
     </Col>
   )
@@ -120,18 +143,21 @@ class Posts extends Component {
 
   render() {
     return (
-      <Row style={{ width: '80%' }}>
-        <Col span={24}>
-          <p>Busca de Posts</p>
-          <Input
-            placeholder="Digite o que você procura"
-            onChange={value => this.onFilterChange(value.target.value)}
-          />
-          <Row>
-            {this.getCards()}
-          </Row>
-        </Col>
-      </Row>
+      <BottomScrollListener onBottom={this.onLoadMoreCards}>
+        <Row className="posts-container-row">
+          <Col className="posts-container-col" span={24}>
+            <p className="container-title">Busca de Posts</p>
+            <Input
+              className="input-filter"
+              placeholder="Digite o que você procura"
+              onChange={value => this.onFilterChange(value.target.value)}
+            />
+            <Row>
+              {this.getCards()}
+            </Row>
+          </Col>
+        </Row>
+      </BottomScrollListener>
     );
   }
 }
